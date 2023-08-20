@@ -11,7 +11,13 @@
 
         public override void GeneratePosition(bool moveRight)
         {
-            //Определяем координаты
+            if (GenerationErrorMessage != errorOptions["smallRoom"])
+            {
+                GenerationSuccessful = true;
+                IsVisible = true;
+            }
+
+            //Определяем координаты относительно мойки
             switch (Kitchen.MainWall)
             {
                 case 0:

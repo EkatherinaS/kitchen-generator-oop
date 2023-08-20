@@ -47,24 +47,30 @@
 
         public string GenerateHtml(bool rightSideStove)
         {
+            //Если труба аходится не у стены, генерация прерывается, обновляется сообщение об ошибке
             if (!Pipe.GenerationSuccessful)
             {
-                updateMessage(false, Pipe.GenerationError);
+                updateMessage(false, Pipe.GenerationErrorMessage);
                 return HtmlCode; 
             }
+
             Sink.GeneratePosition(rightSideStove);
+            //Если генерация мойки неудачная, плита уже не генерируется, обновляется сообщение об ошибке
             if (!Sink.GenerationSuccessful)
             {
                 Stove.IsVisible = false;
-                updateMessage(false, Sink.GenerationError);
+                updateMessage(false, Sink.GenerationErrorMessage);
                 return HtmlCode;
             }
+
             Stove.GeneratePosition(rightSideStove);
+            //Если генерация плиты неудачная, обновляется сообщение об ошибке
             if (!Stove.GenerationSuccessful)
             {
-                updateMessage(false, Stove.GenerationError);
+                updateMessage(false, Stove.GenerationErrorMessage);
                 return HtmlCode;
             }
+
             updateMessage(true);
             return HtmlCode;
         }

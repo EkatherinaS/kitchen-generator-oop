@@ -1,7 +1,8 @@
 ﻿namespace KitchenGenerator
 {
-    internal class GenerationElement
+    internal abstract class GenerationElement
     {
+        //Возможные сообщения об ошибках для элементов генерации
         internal readonly Dictionary<string, string> errorOptions = new Dictionary<string, string>() {
                                                             { "smallRoom", "модуль не помещается в комнату" },
                                                             { "cornerIntersect", "модуль не влез в угол" },
@@ -15,6 +16,7 @@
         private string generationError = "";
         public bool IsVisible { get; set; }
         public bool GenerationSuccessful { get; set; }
+
         public string Color 
         {
             get {
@@ -23,10 +25,9 @@
             }
         }
 
-
-        public string GenerationError
+        public string GenerationErrorMessage
         {
-            get { return generationError; }
+            get  { return generationError; }
             set
             {
                 generationError = value;

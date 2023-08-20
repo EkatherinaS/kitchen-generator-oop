@@ -18,12 +18,14 @@
             Depth = depth;
         }
 
+        //Функция для установки элемента генерации на заданную кухню
         public abstract void GeneratePosition(bool moveLeft);
 
         public string HtmlCode
         {
             get
             {
+                //Если элемент не выводится или генерация не запускалась, возвращается пустое значение
                 if (!IsVisible || x == -1 || y == -1) return "";
                 return
                 $@"context.lineWidth = 2;
@@ -67,9 +69,10 @@
             get { return width; }
             set {
                 if (value < 0) throw new ArgumentException("Ширина элемента должна быть положительным числом");
-                else if (value > kitchen.Width)
+                //Если элемент больше кухни, выводится сообщение об ошибке
+                else if (value > Kitchen.Width)
                 {
-                    GenerationError = errorOptions["smallRoom"];
+                    GenerationErrorMessage = errorOptions["smallRoom"];
                     IsVisible = false;
                 }
                 else width = value;
@@ -82,9 +85,10 @@
             set
             {
                 if (value < 0) throw new ArgumentException("Глубина элемента должна быть положительным числом");
-                else if (value > kitchen.Height)
+                //Если элемент больше кухни, выводится сообщение об ошибке
+                else if (value > Kitchen.Height)
                 {
-                    GenerationError = errorOptions["smallRoom"];
+                    GenerationErrorMessage = errorOptions["smallRoom"];
                     IsVisible = false;
                 }
                 else depth = value;
@@ -97,9 +101,10 @@
             set
             {
                 if (value >= 0 && value <= kitchen.Width - width) x = value;
+                //Если элемент не помещается в кухню при заданной начальной точке, выводится сообщение об ошибке
                 else
                 {
-                    GenerationError = errorOptions["cornerIntersect"];
+                    GenerationErrorMessage = errorOptions["cornerIntersect"];
                     if (value < 0) x = 0;
                     if (value > kitchen.Width - width) x = kitchen.Width - width;
                 }
@@ -112,9 +117,10 @@
             set
             {
                 if (value >= 0 && value <= kitchen.Height - depth) y = value;
+                //Если элемент не помещается в кухню при заданной начальной точке, выводится сообщение об ошибке
                 else
                 {
-                    GenerationError = errorOptions["cornerIntersect"];
+                    GenerationErrorMessage = errorOptions["cornerIntersect"];
                     if (value < 0) y = 0;
                     if (value > kitchen.Height - depth) x = kitchen.Height - depth;
                 }

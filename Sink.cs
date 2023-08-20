@@ -2,14 +2,38 @@
 {
     internal class Sink : KitchenElement
     {
-        private bool Corner { get; set; }
-        private int CornerIndent { get; set; }
+        private bool corner;
+        private int cornerIndent;
+
+        public bool Corner 
+        { 
+            get { return corner; } 
+            set {
+                if (value)
+                {
+                    Text = "Мойка угловая";
+                    //Угловую мойку можно ставить в угол
+                    CornerIndent = 0;
+                }
+                else Text = "Мойка";
+                corner = value;
+            }
+        }
+
+        public int CornerIndent
+        {
+            get { return cornerIndent; }
+            set
+            {
+                if (value >= 0) cornerIndent = value;
+                else throw new ArgumentException("Отступ не может быть меньше 0");
+            }
+        }
+
         private Pipe Pipe { get; set; }
 
         public Sink(Kitchen kitchen, Pipe pipe, int width, int depth, bool corner, int cornerIndent) : base(kitchen, width, depth)
         {
-            if (corner) Text = "Мойка угловая";
-            else Text = "Мойка";
             Corner = corner;
             CornerIndent = cornerIndent;
             Pipe = pipe;
@@ -17,6 +41,17 @@
 
         public override void GeneratePosition(bool moveLeft)
         {
+            GenerationSuccessful = true;
+            IsVisible = true;
+
+            //Угловую мойку можно вращать
+            if (Corner && (Width > Depth || GenerationErrorMessage == errorOptions["smallRoom"]))
+            {
+                int temp = Width;
+                Width = Depth;
+                Depth = temp;
+            }
+
             //Первично определяется главная стена (на которой будут располагаться элементы)
             //Стены определяются следующим образом:
             //0 - левая, 1 - верхняя, 2 - правая, 3 - нижняя
@@ -25,18 +60,6 @@
             else if (Pipe.X == Kitchen.Width) Kitchen.MainWall = 2;
             else if (Pipe.Y == Kitchen.Height) Kitchen.MainWall = 3;
             else { Kitchen.MainWall = -1; return; }
-
-            //Угловую мойку можно вращать
-            if (Corner)
-            {
-                CornerIndent = 0;
-                if (Width > Depth)
-                {
-                    int temp = Width;
-                    Width = Depth;
-                    Depth = temp;
-                }
-            }
 
             //Определяем промежуток, в который должна попадать мойка относительно трубы
             int sinkMin;
@@ -54,7 +77,7 @@
 
             if (sinkMin > sinkMax || sinkMax - sinkMin < Width)
             {
-                GenerationError = errorOptions["cornerIntersect"];
+                GenerationErrorMessage = errorOptions["cornerIntersect"];
                 int temp = sinkMin;
                 sinkMin = sinkMax;
                 sinkMax = temp;
